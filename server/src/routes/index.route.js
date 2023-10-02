@@ -8,7 +8,6 @@ const indexRouter = (io) => {
     res.send('Inicio a API');
   });
 
-  // Pasa io como parámetro a temperaturaRouter
   router.use('/temperatura', temperaturaRouter(io));
 
   return router;

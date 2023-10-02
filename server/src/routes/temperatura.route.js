@@ -5,8 +5,6 @@ const temperaturaRouter = (io) => {
   const router = express.Router();
 
   router.get('/', getTemperaturas);
-
-  // Pasa io como parámetro a createTemperatura
   router.post('/', createTemperatura(io));
 
   return router;

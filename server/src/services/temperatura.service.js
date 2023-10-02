@@ -1,8 +1,8 @@
-const db = require("../../db.js");
+const db = require('../../db.js');
 
 const getTemperaturas = () => {
   return new Promise((resolve, reject) => {
-    const query = "SELECT * FROM Temperatura";
+    const query = 'SELECT * FROM Temperatura';
 
     db.execute(query)
       .then((result) => resolve(result))
@@ -12,7 +12,7 @@ const getTemperaturas = () => {
 
 const getTemperatura = (id) => {
   return new Promise((resolve, reject) => {
-    const query = "SELECT * FROM Articulo WHERE art_codigo = ?";
+    const query = 'SELECT * FROM Articulo WHERE art_codigo = ?';
 
     db.execute(query, [id])
       .then((result) => resolve(result))
@@ -22,7 +22,7 @@ const getTemperatura = (id) => {
 
 const PostTemperatura = (temperatura) => {
   return new Promise((resolve, reject) => {
-    const query = "INSERT INTO Temperatura (IdPlaca, Temperatura, TimeStamp) VALUES (?, ?, ?)";
+    const query = 'INSERT INTO Temperatura (IdPlaca, Temperatura, TimeStamp) VALUES (?, ?, ?)';
     console.log(query);
     const { IdPlaca, Temperatura, TimeStamp } = temperatura;
 
@@ -32,9 +32,8 @@ const PostTemperatura = (temperatura) => {
   });
 };
 
-
 module.exports = {
   getTemperaturas,
   getTemperatura,
-  PostTemperatura
+  PostTemperatura,
 };
