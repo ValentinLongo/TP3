@@ -1,8 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { io } from 'socket.io-client';
 import Chart from 'chart.js/auto';
-
-const socket = io('http://localhost:3000');
 
 function App() {
   const [isConnected, setIsConnected] = useState(false);
@@ -12,18 +9,19 @@ function App() {
   const chartInstance = useRef(null);
 
   useEffect(() => {
-    socket.on('connect', () => setIsConnected(true));
+    // Realizar una solicitud GET para obtener los datos de temperatura
+    fetch('http://localhost:3000/temperatura')
+      .then((response) => response.json())
+      .then((data) => {
+        if (data && data.message === 'Temperatura recuperada exitosamente' && data.data) {
+          setTemperaturaData(data.data);
+        }
+      })
+      .catch((error) => {
+        console.error('Error al obtener datos de temperatura:', error);
+      });
 
-    socket.on('temperatura_data', (data) => {
-      if (Array.isArray(data) && data.length >= 1) {
-        setTemperaturaData(data[0]);
-      }
-    });
-
-    return () => {
-      socket.off('connect');
-      socket.off('temperatura_data');
-    };
+    setIsConnected(true); // Simulamos que estamos conectados
   }, []);
 
   useEffect(() => {
@@ -62,8 +60,8 @@ function App() {
           },
           options: {
             responsive: true,
-            maintainAspectRatio: true, // Establece esto en true para que el gráfico se ajuste al contenedor
-            aspectRatio: 2, // Cambia el aspectRatio según tus preferencias
+            maintainAspectRatio: true,
+            aspectRatio: 2,
           },
         });
       }
@@ -80,7 +78,6 @@ function App() {
 
   return (
     <div className="App">
-      <h2>{isConnected ? 'CONECTADO' : 'NO CONECTADO'}</h2>
       <canvas ref={chartRef}></canvas>
       <div>
         {temperaturaData.length > 0 && (
