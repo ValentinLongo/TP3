@@ -4,21 +4,29 @@ import Chart from 'chart.js/auto';
 function App() {
   const [isConnected, setIsConnected] = useState(false);
   const [temperaturaData, setTemperaturaData] = useState([]);
+  const [humedadData, setHumedadData] = useState([]);
   const [selectedPlaca, setSelectedPlaca] = useState(null);
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
 
   useEffect(() => {
-    // Realizar una solicitud GET para obtener los datos de temperatura
+    // Realizar una solicitud GET para obtener los datos de temperatura y humedad
     fetch('http://localhost:3000/temperatura')
       .then((response) => response.json())
       .then((data) => {
         if (data && data.message === 'Temperatura recuperada exitosamente' && data.data) {
           setTemperaturaData(data.data);
+          // Filtrar los datos de humedad y guardarlos en humedadData
+          setHumedadData(
+            data.data.map((item) => ({
+              ...item,
+              Humedad: parseFloat(item.Humedad),
+            }))
+          );
         }
       })
       .catch((error) => {
-        console.error('Error al obtener datos de temperatura:', error);
+        console.error('Error al obtener datos de temperatura y humedad:', error);
       });
 
     setIsConnected(true); // Simulamos que estamos conectados
@@ -34,16 +42,26 @@ function App() {
           chartInstance.current.destroy();
         }
 
-        const filteredData = temperaturaData.filter(
+        const filteredDataTemperatura = temperaturaData.filter(
           (temperatura) => temperatura.IdPlaca === selectedPlaca
         );
 
-        const labels = filteredData.map((temperatura) => {
+        const filteredDataHumedad = humedadData.filter(
+          (humedad) => humedad.IdPlaca === selectedPlaca
+        );
+
+        const labels = filteredDataTemperatura.map((temperatura) => {
           const timestamp = new Date(temperatura.TimeStamp * 1000);
           return timestamp.toLocaleTimeString();
         });
 
-        const data = filteredData.map((temperatura) => parseFloat(temperatura.Temperatura));
+        const dataTemperatura = filteredDataTemperatura.map((temperatura) =>
+          parseFloat(temperatura.Temperatura)
+        );
+
+        const dataHumedad = filteredDataHumedad.map((humedad) =>
+          parseFloat(humedad.Humedad)
+        );
 
         chartInstance.current = new Chart(ctx, {
           type: 'line',
@@ -52,8 +70,14 @@ function App() {
             datasets: [
               {
                 label: `Temperatura Placa ${selectedPlaca}`,
-                data,
+                data: dataTemperatura,
                 borderColor: 'blue',
+                fill: false,
+              },
+              {
+                label: `Humedad Placa ${selectedPlaca}`,
+                data: dataHumedad,
+                borderColor: 'green',
                 fill: false,
               },
             ],
@@ -66,7 +90,7 @@ function App() {
         });
       }
     }
-  }, [selectedPlaca, temperaturaData]);
+  }, [selectedPlaca, temperaturaData, humedadData]);
 
   const handlePlacaSelect = (idPlaca) => {
     setSelectedPlaca(idPlaca);
