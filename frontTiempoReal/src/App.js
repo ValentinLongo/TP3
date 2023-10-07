@@ -8,6 +8,18 @@ function App() {
   const [isConnected, setIsConnected] = useState(false);
   const [temperaturaData, setTemperaturaData] = useState({});
   const [selectedPlaca, setSelectedPlaca] = useState(1);
+  const [placaNombres, setPlacaNombres] = useState({
+    1: 'Placa 1',
+    2: 'Placa 2',
+    3: 'Placa 3',
+    4: 'Placa 4',
+    5: 'Placa 5',
+    6: 'Placa 6',
+    7: 'Placa 7',
+    8: 'Placa 8',
+    9: 'Placa 9',
+    10: 'Placa 10',
+  });
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
 
@@ -65,13 +77,13 @@ function App() {
           labels,
           datasets: [
             {
-              label: `Temperatura Placa ${selectedPlaca}`,
+              label: `Temperatura ${placaNombres[selectedPlaca]}`,
               data: temperaturaDataArray,
               borderColor: 'blue',
               fill: false,
             },
             {
-              label: `Humedad Placa ${selectedPlaca}`,
+              label: `Humedad ${placaNombres[selectedPlaca]}`,
               data: humedadDataArray,
               borderColor: 'green',
               fill: false,
@@ -81,14 +93,14 @@ function App() {
         options: {
           responsive: true,
           maintainAspectRatio: true,
-          aspectRatio: 2,
+          aspectRatio: 2.5,
         },
       });
     }
-  }, [selectedPlaca, temperaturaData]);
+  }, [selectedPlaca, temperaturaData, placaNombres]);
 
-  const handlePlacaSelect = (idPlaca) => {
-    setSelectedPlaca(idPlaca);
+  const handlePlacaSelect = (e) => {
+    setSelectedPlaca(parseInt(e.target.value));
   };
 
   const placas = Array.from({ length: 10 }, (_, i) => i + 1); // Generar un arreglo [1, 2, ..., 10]
@@ -96,19 +108,22 @@ function App() {
   return (
     <div className="App">
       <h2>{isConnected ? 'CONECTADO' : 'NO CONECTADO'}</h2>
-      <canvas ref={chartRef}></canvas>
       <div>
         <div>
           <h3>Selecciona una placa:</h3>
           <div>
-            {placas.map((idPlaca) => (
-              <button key={idPlaca} onClick={() => handlePlacaSelect(idPlaca)}>
-                Placa {idPlaca}
-              </button>
-            ))}
+            <select onChange={handlePlacaSelect} value={selectedPlaca}>
+              {placas.map((idPlaca) => (
+                <option key={idPlaca} value={idPlaca}>
+                  {placaNombres[idPlaca]}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
       </div>
+      <canvas ref={chartRef}></canvas>
+      
     </div>
   );
 }

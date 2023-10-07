@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import Chart from 'chart.js/auto';
 
 function App() {
-  const [isConnected, setIsConnected] = useState(false);
   const [temperaturaData, setTemperaturaData] = useState([]);
   const [humedadData, setHumedadData] = useState([]);
   const [selectedPlaca, setSelectedPlaca] = useState(null);
@@ -29,7 +28,6 @@ function App() {
         console.error('Error al obtener datos de temperatura y humedad:', error);
       });
 
-    setIsConnected(true); // Simulamos que estamos conectados
   }, []);
 
   useEffect(() => {
@@ -85,15 +83,29 @@ function App() {
           options: {
             responsive: true,
             maintainAspectRatio: true,
-            aspectRatio: 2,
+            aspectRatio: 2.5,
           },
         });
       }
     }
   }, [selectedPlaca, temperaturaData, humedadData]);
 
-  const handlePlacaSelect = (idPlaca) => {
-    setSelectedPlaca(idPlaca);
+  const handlePlacaSelect = (e) => {
+    setSelectedPlaca(parseInt(e.target.value));
+  };
+
+  // Mapeo de nombres para las placas
+  const placaNombres = {
+    1: 'Placa 1',
+    2: 'Placa 2',
+    3: 'Placa 3',
+    4: 'Placa 4',
+    5: 'Placa 5',
+    6: 'Placa 6',
+    7: 'Placa 7',
+    8: 'Placa 8',
+    9: 'Placa 9',
+    10: 'Placa 10'
   };
 
   const uniquePlacas = [
@@ -102,24 +114,24 @@ function App() {
 
   return (
     <div className="App">
-      <canvas ref={chartRef}></canvas>
       <div>
         {temperaturaData.length > 0 && (
           <div>
             <h3>Selecciona una placa:</h3>
             <div>
-              {uniquePlacas.map((idPlaca) => (
-                <button
-                  key={idPlaca}
-                  onClick={() => handlePlacaSelect(idPlaca)}
-                >
-                  Placa {idPlaca}
-                </button>
-              ))}
+              <select onChange={handlePlacaSelect} value={selectedPlaca || ''}>
+                <option value="">Seleccione una placa</option>
+                {uniquePlacas.map((idPlaca) => (
+                  <option key={idPlaca} value={idPlaca}>
+                    {placaNombres[idPlaca]}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
         )}
       </div>
+      <canvas ref={chartRef}></canvas>
     </div>
   );
 }
