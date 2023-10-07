@@ -19,7 +19,14 @@ function App() {
       console.log('Datos recibidos del socket:', data); // Muestra los datos en la consola
       setTemperaturaData((prevData) => ({
         ...prevData,
-        [data.IdPlaca]: [...(prevData[data.IdPlaca] || []), data],
+        [data.IdPlaca]: [
+          ...(prevData[data.IdPlaca] || []),
+          {
+            Temperatura: parseFloat(data.Temperatura),
+            Humedad: parseFloat(data.Humedad),
+            TimeStamp: data.TimeStamp,
+          },
+        ],
       }));
     });
 
@@ -39,13 +46,17 @@ function App() {
 
       const dataForSelectedPlaca = temperaturaData[selectedPlaca] || [];
 
-      const labels = dataForSelectedPlaca.map((temperatura) => {
-        const timestamp = new Date(temperatura.TimeStamp * 1000);
+      const labels = dataForSelectedPlaca.map((data) => {
+        const timestamp = new Date(data.TimeStamp * 1000);
         return timestamp.toLocaleTimeString();
       });
 
-      const data = dataForSelectedPlaca.map((temperatura) =>
-        parseFloat(temperatura.Temperatura)
+      const temperaturaDataArray = dataForSelectedPlaca.map((data) =>
+        parseFloat(data.Temperatura)
+      );
+
+      const humedadDataArray = dataForSelectedPlaca.map((data) =>
+        parseFloat(data.Humedad)
       );
 
       chartInstance.current = new Chart(ctx, {
@@ -55,8 +66,14 @@ function App() {
           datasets: [
             {
               label: `Temperatura Placa ${selectedPlaca}`,
-              data,
+              data: temperaturaDataArray,
               borderColor: 'blue',
+              fill: false,
+            },
+            {
+              label: `Humedad Placa ${selectedPlaca}`,
+              data: humedadDataArray,
+              borderColor: 'green',
               fill: false,
             },
           ],
@@ -85,10 +102,7 @@ function App() {
           <h3>Selecciona una placa:</h3>
           <div>
             {placas.map((idPlaca) => (
-              <button
-                key={idPlaca}
-                onClick={() => handlePlacaSelect(idPlaca)}
-              >
+              <button key={idPlaca} onClick={() => handlePlacaSelect(idPlaca)}>
                 Placa {idPlaca}
               </button>
             ))}

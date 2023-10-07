@@ -22,11 +22,11 @@ const getTemperatura = (id) => {
 
 const PostTemperatura = (temperatura) => {
   return new Promise((resolve, reject) => {
-    const query = 'INSERT INTO Temperatura (IdPlaca, Temperatura, TimeStamp) VALUES (?, ?, ?)';
+    const query = 'INSERT INTO Temperatura (IdPlaca, Temperatura, TimeStamp, Humedad) VALUES (?, ?, ?, ?)';
     console.log(query);
-    const { IdPlaca, Temperatura, TimeStamp } = temperatura;
+    const { IdPlaca, Temperatura, TimeStamp, Humedad } = temperatura;
 
-    db.execute(query, [IdPlaca, Temperatura, TimeStamp])
+    db.execute(query, [IdPlaca, Temperatura, TimeStamp, Humedad])
       .then((result) => resolve(result))
       .catch((err) => reject(err));
   });
