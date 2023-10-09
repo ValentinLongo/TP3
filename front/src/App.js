@@ -105,7 +105,18 @@ function App() {
     7: 'Placa 7',
     8: 'Placa 8',
     9: 'Placa 9',
-    10: 'Placa 10'
+    10: 'Placa 10',
+    11: 'Placa 11',
+    12: 'Placa 12',
+    13: 'Placa 13',
+    14: 'Placa 14',
+    15: 'Placa 15',
+    16: 'Placa 16',
+    17: 'Placa 17',
+    18: 'Placa 18',
+    19: 'Placa 19',
+    20: 'Placa 20',
+    21: 'Placa 21'
   };
 
   const uniquePlacas = [
