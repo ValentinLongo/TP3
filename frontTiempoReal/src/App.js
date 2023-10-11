@@ -116,27 +116,47 @@ function App() {
 
   const placas = Array.from({ length: 21 }, (_, i) => i + 1); // Generar un arreglo [1, 2, ..., 10]
 
-  return (
-    <div className="App">
-      <h2>{isConnected ? 'CONECTADO' : 'NO CONECTADO'}</h2>
-      <div>
-        <div>
-          <h3>Selecciona una placa:</h3>
-          <div>
-            <select onChange={handlePlacaSelect} value={selectedPlaca}>
-              {placas.map((idPlaca) => (
-                <option key={idPlaca} value={idPlaca}>
-                  {placaNombres[idPlaca]}
-                </option>
-              ))}
-            </select>
-          </div>
+    // Estilos CSS en línea para el segundo componente
+    const containerStyle = {
+      fontFamily: 'Arial, sans-serif',
+      padding: '20px',
+      backgroundImage: `url(${process.env.PUBLIC_URL}/fondo.jpg)`,
+      backgroundSize: 'cover',
+      backgroundRepeat: 'no-repeat',
+      minHeight: '91vh',
+      width: '100%',
+      display: 'flex',
+      flexDirection: 'column', // Mostrar elementos en columna
+      justifyContent: 'center', // Centrar verticalmente los elementos
+    };
+  
+    const labelSelectStyle = {
+      display: 'flex', // Mostrar elementos en línea
+      alignItems: 'center', // Centrar verticalmente los elementos
+      marginBottom: '10px'
+    };
+  
+    const selectStyle = {
+      fontSize: '16px',
+      padding: '5px',
+      marginRight: '10px',
+    };
+  
+    return (
+      <div className="App" style={containerStyle}>
+        <div style={labelSelectStyle}>
+          <label style={{ fontSize: '16px', marginRight: '10px' }}>Selecciona una placa:</label>
+          <select onChange={handlePlacaSelect} value={selectedPlaca} style={selectStyle}>
+            {placas.map((idPlaca) => (
+              <option key={idPlaca} value={idPlaca}>
+                {placaNombres[idPlaca]}
+              </option>
+            ))}
+          </select>
         </div>
+        <canvas style={{ backgroundColor: 'white', borderRadius: '10px', padding: '5px', maxWidth: 'calc(100% - 35px)' }} ref={chartRef}></canvas>
       </div>
-      <canvas ref={chartRef}></canvas>
-      
-    </div>
-  );
+    );
 }
 
 export default App;
