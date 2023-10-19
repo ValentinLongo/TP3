@@ -5,19 +5,18 @@ function App() {
   const [temperaturaData, setTemperaturaData] = useState([]);
   const [humedadData, setHumedadData] = useState([]);
   const [selectedPlaca, setSelectedPlaca] = useState(null);
-  const [fechaDesde, setFechaDesde] = useState(new Date()); // Establecer con la fecha actual
-  const [fechaHasta, setFechaHasta] = useState(new Date()); // Establecer con la fecha actual
+  const [fechaDesde, setFechaDesde] = useState(new Date());
+  const [fechaHasta, setFechaHasta] = useState(new Date());
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
 
   useEffect(() => {
-    // Realizar una solicitud GET para obtener los datos de temperatura y humedad
+    // Realiza una solicitud GET para obtener los datos de temperatura y humedad
     fetch('http://localhost:3000/temperatura')
       .then((response) => response.json())
       .then((data) => {
         if (data && data.message === 'Temperatura recuperada exitosamente' && data.data) {
           setTemperaturaData(data.data);
-          // Filtrar los datos de humedad y guardarlos en humedadData
           setHumedadData(
             data.data.map((item) => ({
               ...item,
@@ -29,7 +28,6 @@ function App() {
       .catch((error) => {
         console.error('Error al obtener datos de temperatura y humedad:', error);
       });
-
   }, []);
 
   useEffect(() => {
@@ -37,7 +35,6 @@ function App() {
       if (chartRef.current) {
         const ctx = chartRef.current.getContext('2d');
 
-        // Limpia el gráfico anterior si existe
         if (chartInstance.current) {
           chartInstance.current.destroy();
         }
@@ -50,7 +47,6 @@ function App() {
           (humedad) => humedad.IdPlaca === selectedPlaca
         );
 
-        // Aplicar filtro de fecha desde y hasta
         if (fechaDesde && fechaHasta) {
           filteredDataTemperatura = filteredDataTemperatura.filter(
             (temperatura) => {
@@ -67,7 +63,7 @@ function App() {
 
         const labels = filteredDataTemperatura.map((temperatura) => {
           const timestamp = new Date(temperatura.TimeStamp * 1000);
-          return timestamp.toLocaleTimeString();
+          return timestamp.toLocaleString(); // Muestra la fecha completa con hora
         });
 
         const dataTemperatura = filteredDataTemperatura.map((temperatura) =>
@@ -111,19 +107,18 @@ function App() {
     setSelectedPlaca(parseInt(e.target.value));
   };
 
-  // Función para manejar cambios en la fecha desde
   const handleFechaDesdeChange = (e) => {
     const selectedDate = new Date(e.target.value);
+    selectedDate.setHours(0, 0, 0, 0); // Establece la hora a las 00:00:00
     setFechaDesde(selectedDate);
   };
 
-  // Función para manejar cambios en la fecha hasta
   const handleFechaHastaChange = (e) => {
     const selectedDate = new Date(e.target.value);
+    selectedDate.setHours(23, 59, 59, 999); // Establece la hora a las 23:59:59.999
     setFechaHasta(selectedDate);
   };
 
-  // Mapeo de nombres para las placas
   const placaNombres = {
     1: 'Placa 1',
     2: 'Placa 2',
@@ -145,34 +140,31 @@ function App() {
     18: 'Placa 18',
     19: 'Placa 19',
     20: 'Placa 20',
-    21: 'Placa 21'
+    21: 'Placa 21',
   };
 
-  const uniquePlacas = [
-    ...new Set(temperaturaData.map((temperatura) => temperatura.IdPlaca)),
-  ];
+  const uniquePlacas = [...new Set(temperaturaData.map((temperatura) => temperatura.IdPlaca))];
 
-  // Estilos CSS en línea
   const containerStyle = {
     fontFamily: 'Arial, sans-serif',
     padding: '20px',
-    backgroundImage: `url(${process.env.PUBLIC_URL}/fondo.jpg)`, // Ruta de la imagen de fondo
-    backgroundSize: 'cover', // Ajustar la imagen para cubrir todo el contenedor
-    backgroundRepeat: 'no-repeat', // No repetir la imagen
-    minHeight: '91vh', // Altura del 100% de la ventana gráfica
-    width: '100%', // Ancho del 100%
+    backgroundImage: `url(${process.env.PUBLIC_URL}/fondo.jpg)`,
+    backgroundSize: 'cover',
+    backgroundRepeat: 'no-repeat',
+    minHeight: '91vh',
+    width: '100%',
   };
 
   const selectStyle = {
     fontSize: '16px',
     padding: '5px',
-    marginRight: '10px', // Espacio entre el select y el input de fecha
+    marginRight: '10px',
   };
 
   const inputStyle = {
     fontSize: '16px',
     padding: '5px',
-    marginRight: '10px', // Espacio entre el select y el input de fecha
+    marginRight: '10px',
   };
 
   return (
@@ -180,8 +172,8 @@ function App() {
       <div>
         {temperaturaData.length > 0 && (
           <div>
-            <div style={{ marginBottom:'10px' }}>
-            <label style={{ fontSize: '16px', marginRight: '10px' }}>Seleccione una placa: </label>
+            <div style={{ marginBottom: '10px' }}>
+              <label style={{ fontSize: '16px', marginRight: '10px' }}>Seleccione una placa: </label>
               <select onChange={handlePlacaSelect} value={selectedPlaca || ''} style={selectStyle}>
                 <option value="">Seleccione una placa</option>
                 {uniquePlacas.map((idPlaca) => (
@@ -192,10 +184,20 @@ function App() {
               </select>
 
               <label style={{ fontSize: '16px', marginRight: '10px' }}>Fecha desde: </label>
-              <input type="date" onChange={handleFechaDesdeChange} value={fechaDesde.toISOString().split('T')[0]} style={inputStyle} />
+              <input
+                type="date"
+                onChange={handleFechaDesdeChange}
+                value={fechaDesde.toISOString().split('T')[0]}
+                style={inputStyle}
+              />
 
               <label style={{ fontSize: '16px', marginRight: '10px' }}>Fecha hasta: </label>
-              <input type="date" onChange={handleFechaHastaChange} value={fechaHasta.toISOString().split('T')[0]} style={inputStyle} />
+              <input
+                type="date"
+                onChange={handleFechaHastaChange}
+                value={fechaHasta.toISOString().split('T')[0]}
+                style={inputStyle}
+              />
             </div>
           </div>
         )}
